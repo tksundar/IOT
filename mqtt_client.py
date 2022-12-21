@@ -1,79 +1,67 @@
-# THis file connects to wifi, creates an mqtt client and connects to the test mosquitto broker
-# It then waits for a message to appear on topic led/command.
-# On receipt of the command BLINK, it blinks the on-board led and an external led 10 times
-# before exiting
+# This file connects to wifi, creates an mqtt client and connects to the test mosquitto broker
+# # It then waits for a message to appear on topic led/command.
+# # On receipt of the command on, it turns on the leds and on receipt of off command, it turns
+# off the leds
 
-import network
-import sys
-import time
-
+from umqtt.simple import MQTTClient
 from machine import Pin
-from umqtt.robust import MQTTClient
+import ubinascii
+import network
+import machine
+
+# ESP8266 ESP-12 modules have blue, active-low LED on GPIO2, replace
+# with something else if needed.
+led_builtin = Pin(2, Pin.OUT, value=1)
+led_gpio5 = Pin(5, Pin.OUT, value=0)
+
+# Default MQTT server to connect to
+SERVER = "test.mosquitto.org"
+CLIENT_ID = ubinascii.hexlify(machine.unique_id())
+TOPIC = b"LED"
+SSID = "WIFI_ID"
+PASSWORD = "WIFI_PASSWORD"
 
 
-def connect_to_network(wlan, ssid, password):
+def connect_to_network(wlan):
     wlan.active(True)
-    if not wlan.isconnected():
-        print('Connecting to network...')
-        wlan.connect(ssid, password)
-        while not wlan.isconnected():
-            print('.', end='')
-            time.sleep(3)
-        print()
-        print('Connected:', wlan.isconnected())
+    print('Connecting to network...')
+    wlan.connect(SSID, PASSWORD)
+    while not wlan.isconnected():
+        print('.', end='')
+        time.sleep(3)
+    print()
+    print('Connected:', wlan.isconnected())
 
     # get the interface's IP/netmask/gw/DNS addresses
     print("ip config router: " + str(wlan.ifconfig()))
 
 
-def do_blink(led, off_value):
-    for x in range(10):
-        led.off()
-        time.sleep(0.5)
-        led.on()
-        time.sleep(0.5)
-    led.value(off_value)
+def sub_cb(topic, msg):
+    print((topic, msg))
+    if msg == b"on":
+        led_builtin.value(0)
+        led_gpio5.value(1)
+    elif msg == b"off":
+        led_builtin.value(1)
+        led_gpio5.value(0)
 
 
-def blink():
-    led_builtin = Pin(2, Pin.OUT)
-    led5 = Pin(5, Pin.OUT)
-    do_blink(led_builtin, 1)
-    do_blink(led5, 0)
-    client.disconnect()
-    sys.exit()
+def main(server=SERVER):
+    sta_if = network.WLAN(network.STA_IF)
+    if not sta_if.isconnected():
+        connect_to_network(sta_if)
+    c = MQTTClient(CLIENT_ID, server)
+    # Subscribed messages will be delivered to this callback
+    c.set_callback(sub_cb)
+    c.connect()
+    c.subscribe(TOPIC)
+    print("Connected to %s, subscribed to %s topic" % (server, TOPIC))
+
+    try:
+        while 1:
+            c.wait_msg()
+    finally:
+        c.disconnect()
 
 
-def on_message(topic, msg):
-    command = msg.decode()
-    if command == "BLINK":
-        print("received message " + command)
-        blink()
-
-
-def subscribe(topic):
-    while not done:
-        client.subscribe(topic)
-        time.sleep(3)
-
-
-def connect_to_broker():
-    if sta_if.isconnected():
-        client.connect()
-        print("subscribing to topic " + topic.decode())
-        subscribe(topic)
-    else:
-        print("No network")
-
-
-SSID = "WIFI_ID";
-password = "PASSWORD"
-sta_if = network.WLAN(network.STA_IF)
-if sta_if.isconnected():
-    sta_if.disconnect()
-client_id = "ESP8266"
-client = MQTTClient(client_id, "test.mosquitto.org", port=1883)
-topic = 'led/command'.encode()
-client.set_callback(on_message)
-connect_to_network(sta_if, SSID, password)
-connect_to_broker()
+main("test.mosquitto.org")
