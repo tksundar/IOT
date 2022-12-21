@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>Blinker.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Blinker.py</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">machine </span><span class="s0">import </span><span class="s1">Pin</span>
+<span class="s0">from </span><span class="s1">time </span><span class="s0">import </span><span class="s1">sleep</span>
+
+<span class="s1">led_builtin = Pin(</span><span class="s2">2</span><span class="s0">, </span><span class="s1">Pin.OUT)</span>
+<span class="s1">led_pin5 = Pin(</span><span class="s2">5</span><span class="s0">, </span><span class="s1">Pin.OUT)</span>
+<span class="s3"># blink the builtin LED</span>
+<span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">10</span><span class="s1">):</span>
+    <span class="s1">led_builtin.value(</span><span class="s2">0</span><span class="s1">)</span>
+    <span class="s1">sleep(</span><span class="s2">0.5</span><span class="s1">)</span>
+    <span class="s1">led_builtin.value(</span><span class="s2">1</span><span class="s1">)</span>
+    <span class="s1">sleep(</span><span class="s2">0.5</span><span class="s1">)</span>
+<span class="s3"># Blink an external LED</span>
+<span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">10</span><span class="s1">):</span>
+    <span class="s1">led_pin5.value(</span><span class="s2">0</span><span class="s1">)</span>
+    <span class="s1">sleep(</span><span class="s2">0.5</span><span class="s1">)</span>
+    <span class="s1">led_pin5.value(</span><span class="s2">1</span><span class="s1">)</span>
+    <span class="s1">sleep(</span><span class="s2">0.5</span><span class="s1">)</span>
+<span class="s3"># reset builtin LED</span>
+<span class="s1">led_builtin.value(</span><span class="s2">1</span><span class="s1">)</span>
+<span class="s3"># reset external LED</span>
+<span class="s1">led_pin5.value(</span><span class="s2">0</span><span class="s1">)</span>
+</pre>
+</body>
+</html>

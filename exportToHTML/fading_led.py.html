@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>fading_led.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+.s4 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+fading_led.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">machine</span>
+<span class="s0">from </span><span class="s1">machine </span><span class="s0">import </span><span class="s1">Pin</span>
+<span class="s0">import </span><span class="s1">time</span><span class="s0">, </span><span class="s1">math</span>
+
+<span class="s2"># create a PWM object</span>
+<span class="s1">led_builtin = machine.PWM(machine.Pin(</span><span class="s3">2</span><span class="s1">)</span><span class="s0">, </span><span class="s1">freq=</span><span class="s3">1000</span><span class="s1">)</span>
+<span class="s1">led_pin5 = machine.PWM(machine.Pin(</span><span class="s3">5</span><span class="s1">)</span><span class="s0">, </span><span class="s1">freq=</span><span class="s3">1000</span><span class="s1">)</span>
+
+<span class="s2"># definea function to light the led with varying powersupply</span>
+<span class="s0">def </span><span class="s1">pulse(led</span><span class="s0">, </span><span class="s1">t):</span>
+    <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">20</span><span class="s1">):</span>
+        <span class="s1">on_ratio = math.sin(i / </span><span class="s3">10 </span><span class="s1">* math.pi) * </span><span class="s3">500 </span><span class="s1">+ </span><span class="s3">500</span>
+        <span class="s0">if </span><span class="s1">(i == </span><span class="s3">19</span><span class="s1">):</span>
+            <span class="s1">print(on_ratio)</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">print(on_ratio</span><span class="s0">, </span><span class="s1">end=</span><span class="s4">&quot;|&quot;</span><span class="s1">)</span>
+        <span class="s1">led.duty(int(on_ratio))</span>
+        <span class="s1">time.sleep_ms(t)</span>
+
+    <span class="s1">led.duty(int(</span><span class="s3">1500</span><span class="s1">))</span>
+<span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">10</span><span class="s1">):</span>
+    <span class="s1">pulse(led_builtin</span><span class="s0">, </span><span class="s3">50</span><span class="s1">)</span>
+
+<span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">10</span><span class="s1">):</span>
+    <span class="s1">pulse(led_pin5</span><span class="s0">, </span><span class="s3">50</span><span class="s1">)</span>
+<span class="s2"># Turn off the external led. set duty cycle to 0</span>
+<span class="s1">led_pin5.duty(</span><span class="s3">0</span><span class="s1">)</span>
+</pre>
+</body>
+</html>
