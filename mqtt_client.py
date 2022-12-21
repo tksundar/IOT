@@ -8,6 +8,7 @@ from machine import Pin
 import ubinascii
 import network
 import machine
+import time
 
 # ESP8266 ESP-12 modules have blue, active-low LED on GPIO2, replace
 # with something else if needed.
