@@ -1,6 +1,15 @@
-import sys,time,network
+# THis file connects to wifi, creates an mqtt client and connects to the test mosquitto broker
+# It then waits for a message to appear on topic led/command.
+# On receipt of the command BLINK, it blinks the on-board led and an external led 10 times
+# before exiting
+
+import network
+import sys
+import time
+
 from machine import Pin
 from umqtt.robust import MQTTClient
+
 
 def connect_to_network(wlan, ssid, password):
     wlan.active(True)
@@ -16,6 +25,7 @@ def connect_to_network(wlan, ssid, password):
     # get the interface's IP/netmask/gw/DNS addresses
     print("ip config router: " + str(wlan.ifconfig()))
 
+
 def do_blink(led, off_value):
     for x in range(10):
         led.off()
@@ -23,6 +33,7 @@ def do_blink(led, off_value):
         led.on()
         time.sleep(0.5)
     led.value(off_value)
+
 
 def blink():
     led_builtin = Pin(2, Pin.OUT)
@@ -32,16 +43,19 @@ def blink():
     client.disconnect()
     sys.exit()
 
+
 def on_message(topic, msg):
     command = msg.decode()
     if command == "BLINK":
         print("received message " + command)
         blink()
 
+
 def subscribe(topic):
     while not done:
         client.subscribe(topic)
         time.sleep(3)
+
 
 def connect_to_broker():
     if sta_if.isconnected():
@@ -50,6 +64,7 @@ def connect_to_broker():
         subscribe(topic)
     else:
         print("No network")
+
 
 SSID = "WIFI_ID";
 password = "PASSWORD"
