@@ -7,20 +7,19 @@ from umqtt.simple import MQTTClient
 from machine import Pin
 import ubinascii
 import network
-import machine
 import time
 
 # ESP8266 ESP-12 modules have blue, active-low LED on GPIO2, replace
 # with something else if needed.
-led_builtin = Pin(2, Pin.OUT, value=1)
+led_builtin = Pin(2, Pin.OUT, value=0)
 led_gpio5 = Pin(5, Pin.OUT, value=0)
 
 # Default MQTT server to connect to
 SERVER = "test.mosquitto.org"
 CLIENT_ID = ubinascii.hexlify(machine.unique_id())
 TOPIC = b"LED"
-SSID = "WIFI_ID"
-PASSWORD = "WIFI_PASSWORD"
+SSID = "SUNDAR"
+PASSWORD = "Tksrajan4$"
 
 
 def connect_to_network(wlan):
