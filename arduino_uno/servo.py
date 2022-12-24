@@ -16,7 +16,6 @@ pin9 = board.get_pin('d:9:s')
 
 
 def move_servo(angle):
-    print(angle)
     pin9.write(angle)
 
 
