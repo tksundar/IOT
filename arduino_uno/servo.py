@@ -1,8 +1,9 @@
 import pyfirmata
 from pyfirmata import util
 from tkinter import *
+import time
 
-# don't forget to change the serial port to suit
+# create a board object
 board = pyfirmata.Arduino('COM5')
 
 # start an iterator thread so
@@ -15,6 +16,7 @@ pin9 = board.get_pin('d:9:s')
 
 
 def move_servo(angle):
+    print(angle)
     pin9.write(angle)
 
 
@@ -32,3 +34,15 @@ scale.pack(anchor=CENTER)
 
 # run Tk event loop
 root.mainloop()
+
+# Uncomment for continuous sweep
+
+# while True:
+#
+#     for i in range(180):
+#         move_servo(i)
+#         time.sleep(15/1000)
+#
+#     for i in reversed(range(180)):
+#         move_servo(i)
+#         time.sleep(15/1000)
