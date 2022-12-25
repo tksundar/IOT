@@ -29,7 +29,7 @@ def get_credentials():
 def connect_to_network(wlan):
     wlan.active(True)
     print('Connecting to network...')
-    # fetch wifi credentials from the device?
+    # may be enter this at the time of program execution?
     credentials = get_credentials()
     ssid = credentials[0]
     pwd = credentials[1]
