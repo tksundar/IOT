@@ -3,7 +3,7 @@
 # # On receipt of the command on, it turns on the leds and on receipt of off command, it turns
 # off the leds
 
-import umqtt
+from umqtt.simple import MQTTClient
 import machine
 from machine import Pin
 import ubinascii
@@ -19,14 +19,20 @@ led_gpio5 = Pin(5, Pin.OUT, value=0)
 SERVER = "test.mosquitto.org"
 CLIENT_ID = ubinascii.hexlify(machine.unique_id())
 TOPIC = b"LED"
-SSID = "<SSID>"
-PASSWORD = "PAS$$WORD"
+
+
+def get_credentials():
+    f = open('credentials.txt')
+    return f.read().split('|')
 
 
 def connect_to_network(wlan):
     wlan.active(True)
     print('Connecting to network...')
-    wlan.connect(SSID, PASSWORD)
+    credentials = get_credentials()
+    ssid = credentials[0]
+    pwd = credentials[1]
+    wlan.connect(ssid, pwd)
     while not wlan.isconnected():
         print('.', end='')
         time.sleep(3)
@@ -51,7 +57,7 @@ def main(server=SERVER):
     sta_if = network.WLAN(network.STA_IF)
     if not sta_if.isconnected():
         connect_to_network(sta_if)
-    c = umqtt.MQTTClient(CLIENT_ID, server)
+    c = MQTTClient(CLIENT_ID, server)
     # Subscribed messages will be delivered to this callback
     c.set_callback(sub_cb)
     c.connect()
