@@ -1,15 +1,18 @@
 from machine import Pin
 from time import sleep
 
+led_builtin = Pin(2, Pin.OUT)
+led_pin5 = Pin(5, Pin.OUT)
 
-def blink():
-    led_builtin = Pin(2, Pin.OUT)
 
+def blink(led):
     # blink the builtin LED
     for x in range(10):
-        led_builtin.on()
+        led.on()
         sleep(0.5)
-        led_builtin.off()
+        led.off()
         sleep(0.5)
 
-# blink()
+
+blink(led_builtin)
+blink(led_pin5)
