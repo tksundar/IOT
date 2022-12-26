@@ -7,10 +7,9 @@ def blink():
 
     # blink the builtin LED
     for x in range(10):
-        led_builtin.off()
-        sleep(0.5)
         led_builtin.on()
         sleep(0.5)
-    led_builtin.off()
+        led_builtin.off()
+        sleep(0.5)
 
 # blink()
