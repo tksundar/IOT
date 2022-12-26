@@ -44,17 +44,25 @@ def connect_to_network(wlan):
     print("ip config router: " + str(wlan.ifconfig()))
 
 
+def blink():
+    led_gpio5.off()
+    led_builtin.on()
+    time.sleep_ms(500)
+    led_builtin.off()
+
+
 def sub_cb(topic, msg):
     print((topic, msg))
     if msg == b"on":
-        led_builtin.value(0)
-        led_gpio5.value(1)
+        led_builtin.on()
+        led_gpio5.on()
     elif msg == b"off":
-        led_builtin.value(1)
-        led_gpio5.value(0)
+        led_builtin.off()
+        led_gpio5.off()
 
 
 def main(server=SERVER):
+    blink()
     sta_if = network.WLAN(network.STA_IF)
     if not sta_if.isconnected():
         connect_to_network(sta_if)
@@ -71,5 +79,4 @@ def main(server=SERVER):
     finally:
         c.disconnect()
 
-
-main("test.mosquitto.org")
+# main()
