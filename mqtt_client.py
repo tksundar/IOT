@@ -37,8 +37,6 @@ def connect_to_network(wlan):
     while not wlan.isconnected():
         print('.', end='')
         time.sleep(3)
-    print()
-    print('Connected:', wlan.isconnected())
 
     # get the interface's IP/netmask/gw/DNS addresses
     print("ip config router: " + str(wlan.ifconfig()))
