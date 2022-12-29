@@ -8,12 +8,14 @@ import machine
 from machine import Pin
 import ubinascii
 import network
-import time
+from time import sleep
 
 # ESP8266 ESP-12 modules have blue, active-low LED on GPIO2, replace
 # with something else if needed.
-led_builtin = Pin(2, Pin.OUT, value=0)
-led_gpio5 = Pin(5, Pin.OUT, value=0)
+led_builtin = Pin(2, Pin.OUT)
+led_gpio5 = Pin(5, Pin.OUT)
+led_builtin.off()
+led_gpio5.off()
 
 # Default MQTT server to connect to
 SERVER = "test.mosquitto.org"
@@ -36,22 +38,26 @@ def connect_to_network(wlan):
     wlan.connect(ssid, pwd)
     while not wlan.isconnected():
         print('.', end='')
-        time.sleep(3)
+        sleep(3)
 
     # get the interface's IP/netmask/gw/DNS addresses
     print("ip config router: " + str(wlan.ifconfig()))
 
 
-def blink():
-    led_gpio5.off()
-    led_builtin.on()
-    time.sleep_ms(500)
-    led_builtin.off()
+def blink(led):
+    for i in range(10):
+        led.on()
+        sleep(0.5)
+        led.off()
+        sleep(0.5)
 
 
 def sub_cb(topic, msg):
     print((topic, msg))
-    if msg == b"on":
+    if msg == b"blink":
+        blink(led_builtin)
+        blink(led_gpio5)
+    elif msg == b"on":
         led_builtin.on()
         led_gpio5.on()
     elif msg == b"off":
@@ -60,7 +66,6 @@ def sub_cb(topic, msg):
 
 
 def main(server=SERVER):
-    blink()
     sta_if = network.WLAN(network.STA_IF)
     if not sta_if.isconnected():
         connect_to_network(sta_if)
