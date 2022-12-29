@@ -77,7 +77,7 @@ def main(server=SERVER):
     print("Connected to %s, subscribed to %s topic" % (server, TOPIC))
 
     try:
-        while 1:
+        while True:
             c.wait_msg()
     finally:
         c.disconnect()
